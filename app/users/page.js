@@ -86,6 +86,7 @@ export default function UsersPage() {
                 <th className="px-4 py-3">暱稱</th>
                 <th className="px-4 py-3">角色</th>
                 <th className="px-4 py-3">狀態</th>
+                <th className="px-4 py-3">檢舉紀點</th>
                 <th className="px-4 py-3">建立時間</th>
                 <th className="px-4 py-3">操作</th>
               </tr>
@@ -100,12 +101,26 @@ export default function UsersPage() {
                   <td className="px-4 py-3">
                     {u.banned ? (
                       <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">
-                        已停權
+                        {u.bannedUntil
+                          ? `暫停至 ${new Date(u.bannedUntil).toLocaleDateString("zh-TW")}`
+                          : "永久停權"}
                       </span>
                     ) : (
                       <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
                         正常
                       </span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3">
+                    {u.reportStrikes > 0 ? (
+                      <span
+                        className="text-xs font-medium text-gray-600"
+                        title="因檢舉之後被管理員恢復顯示（視為誤報）而累積的點數，每 5 點觸發一次暫停"
+                      >
+                        {u.reportStrikes} 點
+                      </span>
+                    ) : (
+                      <span className="text-xs text-gray-300">—</span>
                     )}
                   </td>
                   <td className="px-4 py-3 text-gray-400">

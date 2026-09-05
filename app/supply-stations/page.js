@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import AdminShell from "../../components/AdminShell";
+import ReportsModal from "../../components/ReportsModal";
 import { api, ApiError } from "../../lib/api";
 
 const SUPPLY_LABELS = {
@@ -20,6 +21,7 @@ export default function SupplyStationsPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState(null);
+  const [reportsTarget, setReportsTarget] = useState(null); // { id, title } | null
 
   async function load() {
     setLoading(true);
@@ -97,9 +99,12 @@ export default function SupplyStationsPage() {
                       </span>
                     )}
                     {s.reportCount > 0 && (
-                      <span className="rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-700">
-                        被檢舉 {s.reportCount} 次
-                      </span>
+                      <button
+                        onClick={() => setReportsTarget({ id: s.id, title: s.title })}
+                        className="rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-700 hover:bg-yellow-200"
+                      >
+                        被檢舉 {s.reportCount} 次・查看紀錄
+                      </button>
                     )}
                   </div>
                   <p className="mt-1 text-sm text-gray-500">
@@ -152,6 +157,14 @@ export default function SupplyStationsPage() {
           ))}
           <p className="text-xs text-gray-400">共 {total} 筆</p>
         </div>
+      )}
+
+      {reportsTarget && (
+        <ReportsModal
+          title={reportsTarget.title}
+          fetchReports={() => api.supplyStationReports(reportsTarget.id)}
+          onClose={() => setReportsTarget(null)}
+        />
       )}
     </AdminShell>
   );

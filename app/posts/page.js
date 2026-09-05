@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import AdminShell from "../../components/AdminShell";
+import ReportsModal from "../../components/ReportsModal";
 import { api, ApiError } from "../../lib/api";
 
 export default function PostsPage() {
@@ -11,6 +12,7 @@ export default function PostsPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState(null);
+  const [reportsTarget, setReportsTarget] = useState(null); // { id, title } | null
 
   async function load() {
     setLoading(true);
@@ -88,9 +90,12 @@ export default function PostsPage() {
                       </span>
                     )}
                     {p.reportCount > 0 && (
-                      <span className="rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-700">
-                        被檢舉 {p.reportCount} 次
-                      </span>
+                      <button
+                        onClick={() => setReportsTarget({ id: p.id, title: p.title })}
+                        className="rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-700 hover:bg-yellow-200"
+                      >
+                        被檢舉 {p.reportCount} 次・查看紀錄
+                      </button>
                     )}
                   </div>
                   <p className="mt-1 text-sm text-gray-500">{p.description || "（無描述）"}</p>
@@ -141,6 +146,14 @@ export default function PostsPage() {
           ))}
           <p className="text-xs text-gray-400">共 {total} 筆</p>
         </div>
+      )}
+
+      {reportsTarget && (
+        <ReportsModal
+          title={reportsTarget.title}
+          fetchReports={() => api.postReports(reportsTarget.id)}
+          onClose={() => setReportsTarget(null)}
+        />
       )}
     </AdminShell>
   );
