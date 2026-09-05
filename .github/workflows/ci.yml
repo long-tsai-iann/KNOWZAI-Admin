@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Test and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - run: npm ci
+      - run: npm test
+      # 建置不需要真的後端網址也能過（NEXT_PUBLIC_API_BASE_URL 沒設定時
+      # lib/api.js 會退回 http://localhost:3002，只影響執行期行為，不影響
+      # build 本身能不能過）。
+      - run: npm run build

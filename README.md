@@ -16,6 +16,7 @@
 - **物資分配站審核**：同上，管理 9.13 新增的物資分配站功能
 - **避難設施資料維護**：新增/編輯/刪除 `Shelter` 資料（原本只能靠匯入腳本或直接改資料庫）
 - **使用者管理**：查詢使用者、停權/解除停權
+- **使用說明**（`/help`）：給團隊成員看的操作手冊，App 內建，不用另外找文件
 
 ## 本機開發
 
@@ -40,6 +41,28 @@ npm run admin:promote -- your-email@example.com
 ```
 
 之後就可以用這個帳號的 email/密碼登入這裡。
+
+## 測試
+
+```bash
+npm test
+```
+
+Jest + React Testing Library，目前 14 個測試，涵蓋：
+
+- `lib/auth.js`：localStorage token 存取（純函式，完整覆蓋）
+- `lib/api.js`：統一的後端呼叫封裝——帶 Authorization header、401 時清 token、
+  錯誤訊息解析，這是每個頁面都依賴的共用邏輯，優先覆蓋
+- `components/AdminGuard.js`：登入狀態/角色檢查的導頁邏輯（沒 token、
+  role 不是 ADMIN、`/api/auth/me` 失敗，各情境都要導去對的地方）——這是
+  安全性最關鍵的元件，值得完整測試
+
+其餘頁面（dashboard/posts/users/…）目前沒有寫測試：這些頁面大多是「打 API →
+渲染表格/圖表」的重複樣板，測試投資報酬率較低，之後如果邏輯變複雜可以再補。
+
+`.github/workflows/ci.yml`：push/PR 到 `main` 時自動跑 `npm test` + `npm run
+build`，不需要任何真實密鑰（`NEXT_PUBLIC_API_BASE_URL` 沒設定時建置仍然會過，
+只影響執行期行為）。
 
 ## 部署（Vercel）
 
@@ -76,18 +99,20 @@ remote` 的舊網址也還能繼續用一段時間。
 .
 ├── app/
 │   ├── login/page.js          # 登入頁
-│   ├── dashboard/page.js      # 儀表板
+│   ├── dashboard/page.js      # 儀表板（含 recharts 圖表）
 │   ├── posts/page.js          # 貼文審核
 │   ├── supply-stations/page.js
 │   ├── shelters/page.js       # 避難設施 CRUD
 │   ├── users/page.js          # 使用者管理
+│   ├── help/page.js           # 使用說明（給團隊成員看的操作手冊）
 │   └── layout.js
 ├── components/
 │   ├── AdminGuard.js   # 檢查登入狀態 + role === ADMIN，沒過就導去 /login
 │   └── AdminShell.js   # 側邊欄導覽 + 包住 AdminGuard，各頁面共用
-└── lib/
-    ├── auth.js   # localStorage token 存取
-    └── api.js    # 呼叫後端 API 的統一封裝
+├── lib/
+│   ├── auth.js   # localStorage token 存取
+│   └── api.js    # 呼叫後端 API 的統一封裝
+└── __tests__/    # Jest + React Testing Library
 ```
 
 ## 待補（下一步可以做的）

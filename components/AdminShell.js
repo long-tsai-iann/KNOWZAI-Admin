@@ -11,6 +11,7 @@ const NAV_ITEMS = [
   { href: "/supply-stations", label: "物資分配站審核", key: "supply-stations" },
   { href: "/shelters", label: "避難設施維護", key: "shelters" },
   { href: "/users", label: "使用者管理", key: "users" },
+  { href: "/help", label: "使用說明", key: "help" },
 ];
 
 export default function AdminShell({ active, children }) {

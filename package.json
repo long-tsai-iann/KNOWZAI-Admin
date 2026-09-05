@@ -7,7 +7,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "test": "jest"
   },
   "dependencies": {
     "next": "^16.2.9",
@@ -16,7 +16,12 @@
     "recharts": "^3.10.1"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
     "autoprefixer": "10.4.20",
+    "jest": "^30.5.1",
+    "jest-environment-jsdom": "^30.5.1",
     "postcss": "^8.5.15",
     "tailwindcss": "3.4.14"
   },
