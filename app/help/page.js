@@ -156,6 +156,36 @@ export default function HelpPage() {
         </ul>
       </Section>
 
+      <Section title="稽核日誌">
+        <p>
+          系統會自動記錄三類日誌，這頁只能「看」，
+          <strong>任何人（包含管理員）都無法修改或刪除任何一筆紀錄</strong>
+          ——這是刻意的設計，日誌如果可以被當事人自己改掉就失去意義了。
+          唯一的刪除方式是超過保存期限後由系統自動清除。
+        </p>
+        <ul className="ml-5 list-disc space-y-1">
+          <li>
+            <strong>管理員操作</strong>：誰在什麼時候停權了誰、隱藏或刪除了哪一則
+            內容、改了哪筆避難設施。<strong>被系統擋下的操作也會記</strong>
+            （例如有人嘗試停權自己）。保留 1 年。
+          </li>
+          <li>
+            <strong>登入事件</strong>：登入成功/失敗、註冊，含失敗原因（密碼錯誤、
+            帳號不存在、已被停權…）與來源 IP。同一個帳號短時間出現大量登入失敗，
+            通常代表有人在嘗試猜密碼。保留 1 年。
+          </li>
+          <li>
+            <strong>AI 對話（阿巧）</strong>：使用者問了什麼、AI 回了什麼。
+            因為對話內容可能包含位置、健康、家庭等敏感資訊，
+            <strong>只保留 30 天</strong>就會自動刪除，比另外兩類短很多。
+          </li>
+        </ul>
+        <p className="text-gray-500">
+          完整的規範（依 ISO 27001 / 27701 / 42001 制訂）在後端專案的
+          <code className="mx-1 rounded bg-gray-100 px-1">docs/audit-logging-policy.md</code>。
+        </p>
+      </Section>
+
       <Section title="如何取得管理員權限？">
         <p>
           <strong>這個網頁本身沒有任何地方可以把一個帳號設成管理員</strong>
