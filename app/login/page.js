@@ -1,16 +1,29 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { api, ApiError } from "../../lib/api";
 import { saveToken, clearToken } from "../../lib/auth";
 
-export default function LoginPage() {
+// 被導回登入頁的原因。原本 AdminGuard 會導到 /login?error=... 但這頁從來沒有
+// 讀過這個參數，使用者只會莫名其妙被踢回來、看不到任何說明。
+const REDIRECT_REASONS = {
+  "not-admin": "這個帳號沒有管理後台的存取權限",
+  idle: "閒置過久，已自動登出，請重新登入",
+};
+
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const reason = REDIRECT_REASONS[searchParams.get("error")];
+    if (reason) setError(reason);
+  }, [searchParams]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -73,5 +86,15 @@ export default function LoginPage() {
         </button>
       </form>
     </div>
+  );
+}
+
+// useSearchParams 在 App Router 需要包在 Suspense 內，否則整頁會被強制改成
+// 動態渲染（build 時會直接報錯）。
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
   );
 }

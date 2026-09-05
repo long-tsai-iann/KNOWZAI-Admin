@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { loadToken, clearToken } from "../lib/auth";
 import { api, ApiError } from "../lib/api";
+import { watchIdle } from "../lib/idleTimeout";
 
 /**
  * 包住所有需要登入的頁面：確認有 token、且該帳號的 role 真的是 ADMIN
@@ -43,6 +44,12 @@ export default function AdminGuard({ children }) {
       cancelled = true;
     };
   }, [router]);
+
+  // 閒置逾時自動登出（資安審查 M-1）。只在通過驗證、真的在使用後台時才監看。
+  useEffect(() => {
+    if (status !== "ok") return;
+    return watchIdle(() => router.replace("/login?error=idle"));
+  }, [status, router]);
 
   if (status !== "ok") {
     return (
