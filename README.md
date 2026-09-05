@@ -11,12 +11,23 @@
 
 ## 功能
 
-- **儀表板**：使用者/貼文/物資分配站/避難設施/推播裝置等基本統計
-- **災情貼文審核**：查看已被檢舉自動隱藏的貼文、手動隱藏/恢復/刪除
+- **儀表板**：使用者/貼文/物資分配站/避難設施/推播裝置等基本統計（含 recharts 圖表）
+- **災情貼文審核**：查看已被檢舉自動隱藏的貼文、手動隱藏/恢復/刪除，
+  並可點「被檢舉 N 次」查看完整檢舉紀錄（誰檢舉、原因、時間）
 - **物資分配站審核**：同上，管理 9.13 新增的物資分配站功能
 - **避難設施資料維護**：新增/編輯/刪除 `Shelter` 資料（原本只能靠匯入腳本或直接改資料庫）
-- **使用者管理**：查詢使用者、停權/解除停權
+- **使用者管理**：查詢使用者、停權/解除停權，並顯示「檢舉紀點」與暫停到期日
+- **稽核日誌**（`/logs`）：查詢管理員操作、登入事件、AI 對話三類日誌，唯讀
 - **使用說明**（`/help`）：給團隊成員看的操作手冊，App 內建，不用另外找文件
+
+### 錯誤檢舉懲罰機制
+
+管理員把「因為被檢舉而隱藏」的內容按下**恢復顯示**時，系統視為「這些檢舉是錯的」，
+該內容底下每一位檢舉人各記一點。每累積 **5 點**自動暫停帳號，天數逐次加倍
+（第一次 3 天 → 7 天 → 14 天…）。這種暫停**有到期日**，過期後對方下次登入會自動解除，
+跟管理員手動的「永久停權」是兩回事（使用者管理頁的狀態欄會分別顯示）。
+
+實作在後端 `services/reportStrikes.js`，同一批檢舉不會因為反覆隱藏/恢復而被重複記點。
 
 ## 本機開發
 
@@ -92,6 +103,10 @@ remote` 的舊網址也還能繼續用一段時間。
   `authRequired` middleware 本身不查資料庫的設計），詳見 backend 的
   `AGENTS.md` 9.14。
 - `app/layout.js` 設定 `robots: { index: false, follow: false }`，避免被搜尋引擎索引。
+- **稽核日誌只能看、不能改**：管理員操作、登入事件、AI 對話三類日誌在後端是
+  append-only，**沒有任何修改或刪除的 API**（連管理員也不行），唯一的刪除路徑是
+  超過保存期限後自動清除（管理操作/登入事件 1 年、AI 對話 30 天）。完整規範見後端
+  專案的 [`docs/audit-logging-policy.md`](https://github.com/FantasticJZI/long_tsai_iann/blob/main/docs/audit-logging-policy.md)。
 
 ## 目錄結構
 
@@ -103,12 +118,14 @@ remote` 的舊網址也還能繼續用一段時間。
 │   ├── posts/page.js          # 貼文審核
 │   ├── supply-stations/page.js
 │   ├── shelters/page.js       # 避難設施 CRUD
-│   ├── users/page.js          # 使用者管理
+│   ├── users/page.js          # 使用者管理（含檢舉紀點/暫停到期日）
+│   ├── logs/page.js           # 稽核日誌查詢（三個分頁，唯讀）
 │   ├── help/page.js           # 使用說明（給團隊成員看的操作手冊）
 │   └── layout.js
 ├── components/
-│   ├── AdminGuard.js   # 檢查登入狀態 + role === ADMIN，沒過就導去 /login
-│   └── AdminShell.js   # 側邊欄導覽 + 包住 AdminGuard，各頁面共用
+│   ├── AdminGuard.js    # 檢查登入狀態 + role === ADMIN，沒過就導去 /login
+│   ├── AdminShell.js    # 側邊欄導覽 + 包住 AdminGuard，各頁面共用
+│   └── ReportsModal.js  # 顯示某則內容的完整檢舉紀錄
 ├── lib/
 │   ├── auth.js   # localStorage token 存取
 │   └── api.js    # 呼叫後端 API 的統一封裝
