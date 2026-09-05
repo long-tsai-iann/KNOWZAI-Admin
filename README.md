@@ -43,23 +43,20 @@ npm run admin:promote -- your-email@example.com
 
 ## 部署（Vercel）
 
-GitHub repo：`long-tsai-iann/long_tsai_iann_admin`（若還沒改名，建議在第一次 push
-前就把 GitHub repo 名稱從 `KNOWZAI-Admin` 改成這個，之後才不會出現「本機資料夾叫
-long_tsai_iann_admin、GitHub repo 卻叫 KNOWZAI-Admin」的不一致）。
+GitHub repo：`long-tsai-iann/KNOWZAI-Admin`（已 push，`main` 分支）。專案內部
+（package.json、文件）都已統一改用 `long_tsai_iann_admin` 命名，但 GitHub repo
+本身保留原名 `KNOWZAI-Admin`，是使用者確認過的決定——之後真的想改也還是可以在
+GitHub → Settings → Repository name 改，改名後 GitHub 會自動導向新網址、`git
+remote` 的舊網址也還能繼續用一段時間。
 
-1. `git remote add origin git@github.com:long-tsai-iann/long_tsai_iann_admin.git`
-   （或用 https URL），`git push -u origin master`。
-2. 到 [Vercel](https://vercel.com) → New Project → 匯入這個 repo（可以用同一個
-   Vercel 帳號，跟 `longzaiying-web` 是兩個獨立的 Project，不會互相影響）。
-   若 Vercel 專案也是先前用 `KNOWZAI-Admin` 建立的，建議在 Settings → General
-   一併把 Project Name 改成 `long_tsai_iann_admin`——因為還沒 push 過內容、也
-   還沒有人在用這個網址，現在改名不會弄壞任何既有連結。
-3. Framework 會自動辨識為 Next.js。部署前在 Vercel → Settings → Environment
+1. 到 [Vercel](https://vercel.com) → New Project → 匯入 `KNOWZAI-Admin` 這個 repo
+   （可以用同一個 Vercel 帳號，跟 `longzaiying-web` 是兩個獨立的 Project，不會
+   互相影響）。
+2. Framework 會自動辨識為 Next.js。部署前在 Vercel → Settings → Environment
    Variables 加上 `NEXT_PUBLIC_API_BASE_URL`（填後端網址，例如
    `https://long-tsai-iann.onrender.com`）。
-4. Deploy。之後每次 push 到 `main`/`master` 會自動重新部署（跟 `longzaiying-web`
-   一樣的流程）。
-5. 建議在 Vercel → Settings → Domains 綁一個不容易被公開猜到的子網域
+3. Deploy。之後每次 push 到 `main` 會自動重新部署（跟 `longzaiying-web` 一樣的流程）。
+4. 建議在 Vercel → Settings → Domains 綁一個不容易被公開猜到的子網域
    （例如 `admin.knowzai.app`），不需要對外公開宣傳這個網址。
 
 ## 安全性設計筆記
