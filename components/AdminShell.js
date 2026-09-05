@@ -24,8 +24,8 @@ export default function AdminShell({ active, children }) {
 
   return (
     <AdminGuard>
-      <div className="flex min-h-screen">
-        <aside className="flex w-56 shrink-0 flex-col border-r border-gray-200 bg-white">
+      <div className="flex h-screen overflow-hidden">
+        <aside className="flex w-56 shrink-0 flex-col overflow-y-auto border-r border-gray-200 bg-white">
           <div className="px-5 py-6">
             <div className="text-lg font-bold text-orange-700">攏災影</div>
             <div className="text-xs text-gray-400">管理後台</div>
@@ -70,7 +70,7 @@ export default function AdminShell({ active, children }) {
             </button>
           </div>
         </aside>
-        <main className="flex-1 bg-gray-50 p-8">{children}</main>
+        <main className="flex-1 overflow-y-auto bg-gray-50 p-8">{children}</main>
       </div>
     </AdminGuard>
   );
