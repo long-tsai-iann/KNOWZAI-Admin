@@ -1,11 +1,13 @@
-# 攏災影管理後台（longzaiying-admin）
+# 攏災影管理後台（long_tsai_iann_admin）
 
 攏災影 KNOW ZAI 的內部管理後台，使用 **Next.js (App Router) + Tailwind CSS** 建置，
 是一個純前端的 SPA（JWT 存在瀏覽器 localStorage，沒有伺服器端 session），直接呼叫
 既有的 Express 後端（`long_tsai_iann/backend`）的 `/api/admin/*` API。
 
 刻意跟官方行銷網站（`longzaiying-web`）分開成獨立專案：這裡是內部工具、需要登入，
-行銷網站是公開內容，兩者的風險等級與維護者不一樣，不應該共用一個部署。
+行銷網站是公開內容，兩者的風險等級與維護者不一樣，不應該共用一個部署。行銷網站
+目前已經公開上線（`knowzai-web.vercel.app`），維持原本命名，沒有跟著這次改名，
+避免打斷既有的公開連結。
 
 ## 功能
 
@@ -41,15 +43,22 @@ npm run admin:promote -- your-email@example.com
 
 ## 部署（Vercel）
 
-尚未部署。建議流程：
+GitHub repo：`long-tsai-iann/long_tsai_iann_admin`（若還沒改名，建議在第一次 push
+前就把 GitHub repo 名稱從 `KNOWZAI-Admin` 改成這個，之後才不會出現「本機資料夾叫
+long_tsai_iann_admin、GitHub repo 卻叫 KNOWZAI-Admin」的不一致）。
 
-1. 這個資料夾建一個新的 GitHub repo（例如 `long-tsai-iann/KNOWZAI-admin`），push 上去。
-2. 到 [Vercel](https://vercel.com) → New Project → 匯入這個新 repo（可以用同一個
+1. `git remote add origin git@github.com:long-tsai-iann/long_tsai_iann_admin.git`
+   （或用 https URL），`git push -u origin master`。
+2. 到 [Vercel](https://vercel.com) → New Project → 匯入這個 repo（可以用同一個
    Vercel 帳號，跟 `longzaiying-web` 是兩個獨立的 Project，不會互相影響）。
+   若 Vercel 專案也是先前用 `KNOWZAI-Admin` 建立的，建議在 Settings → General
+   一併把 Project Name 改成 `long_tsai_iann_admin`——因為還沒 push 過內容、也
+   還沒有人在用這個網址，現在改名不會弄壞任何既有連結。
 3. Framework 會自動辨識為 Next.js。部署前在 Vercel → Settings → Environment
    Variables 加上 `NEXT_PUBLIC_API_BASE_URL`（填後端網址，例如
    `https://long-tsai-iann.onrender.com`）。
-4. Deploy。之後每次 push 到 `main` 會自動重新部署（跟 `longzaiying-web` 一樣的流程）。
+4. Deploy。之後每次 push 到 `main`/`master` 會自動重新部署（跟 `longzaiying-web`
+   一樣的流程）。
 5. 建議在 Vercel → Settings → Domains 綁一個不容易被公開猜到的子網域
    （例如 `admin.knowzai.app`），不需要對外公開宣傳這個網址。
 
