@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { href: "/shelters", label: "避難設施維護", key: "shelters" },
   { href: "/users", label: "使用者管理", key: "users" },
   { href: "/logs", label: "稽核日誌", key: "logs" },
+  { href: "/push-test", label: "推播測試", key: "push-test" },
 ];
 
 export default function AdminShell({ active, children }) {

@@ -186,6 +186,52 @@ export default function HelpPage() {
         </p>
       </Section>
 
+      <Section title="推播測試">
+        <p>
+          用來確認 App 的推播（FCM）這條路是不是正常、送出有沒有明顯延遲，
+          不是給一般使用者看的正式通知，開發/測試時用。
+        </p>
+        <ul className="ml-5 list-disc space-y-1">
+          <li>
+            <strong>不填「裝置 token」</strong>：會送到你現在登入的這個管理員
+            帳號名下、所有已經在 App 裡用同一組帳號登入過的裝置。想測自己的
+            手機，先在手機上的 App 用這個帳號登入一次，再回來這裡送出即可。
+          </li>
+          <li>
+            <strong>填「裝置 token」</strong>：只送給你指定的那一支裝置，不管
+            那支裝置是不是自己帳號的——適合測特定的 QA 機，或別人回報收不到
+            推播時，請對方提供裝置 token 來單獨測試。
+          </li>
+          <li>
+            結果會列出每一支裝置的<strong>成功/失敗</strong>、
+            <strong>耗時（毫秒）</strong>，失敗的話會附上原因（例如裝置 token
+            已經失效）。
+            <span className="text-gray-500">
+              這個耗時是後端呼叫 FCM 送出的時間，不是手機實際收到的時間——
+              如果耗時正常但手機還是收不到，通常是裝置端（通知權限、網路、
+              系統休眠限制）的問題。
+            </span>
+          </li>
+          <li>
+            <strong>帳號名下沒有任何裝置、也沒填 token</strong>：會顯示錯誤，
+            提示你先登入 App 或直接填 token。
+          </li>
+          <li>
+            <strong>後端顯示「FCM 尚未設定」</strong>：代表伺服器環境變數
+            <code className="mx-1 rounded bg-gray-100 px-1">
+              FIREBASE_SERVICE_ACCOUNT
+            </code>
+            沒有設定，整個推播功能（不只這個測試）目前都是停用狀態，需要請
+            負責維運的隊友確認伺服器設定。
+          </li>
+        </ul>
+        <p className="text-gray-500">
+          每次送出都會記進「稽核日誌 → 管理員操作」（action 是
+          <code className="mx-1 rounded bg-gray-100 px-1">PUSH_TEST</code>），
+          跟其他會真的產生效果的操作一樣可追溯。
+        </p>
+      </Section>
+
       <Section title="如何取得管理員權限？">
         <p>
           <strong>這個網頁本身沒有任何地方可以把一個帳號設成管理員</strong>
