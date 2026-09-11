@@ -232,6 +232,50 @@ export default function HelpPage() {
         </p>
       </Section>
 
+      <Section title="緊急狀態調整">
+        <p>
+          決定物資分配站現在能不能被<strong>建立</strong>（一般查詢/瀏覽不受
+          影響）。預設是後端自動判斷：每 15 分鐘同步中央氣象署資料，地震依
+          <strong>規模/最大震度</strong>分成三級——一般有感地震維持 3 小時、
+          規模較大（規模 ≥5.5 或最大震度 ≥4 級）維持 3 天、重大地震（規模
+          ≥6.5 或最大震度 ≥5 級）維持 30 天；寒流/強烈冷氣團則維持 3 小時，
+          且只要 CWA 持續發布/展延警報就會自動延續。
+        </p>
+        <ul className="ml-5 list-disc space-y-1">
+          <li>
+            CWA 的原始資料<strong>沒有</strong>「這是不是真的重大災害」的旗標，
+            規模/震度只是粗略預設值——實際災損（有沒有建築倒塌、需不需要
+            大規模安置）沒辦法從這些數字直接判斷出來，需要人來確認。
+          </li>
+          <li>
+            <strong>延長 / 強制開放建立</strong>：自動判斷的視窗已經過了，但
+            實際勘災確認救災/安置還在進行，可以在這裡手動延長（填想維持的
+            天數，例如整個安置期預估還要 30 天）。
+          </li>
+          <li>
+            <strong>提早結束 / 強制關閉</strong>：自動分級判斷過寬（例如某次
+            地震規模不小但實際上沒有需要開放物資分配站的必要），可以在這裡
+            提早關閉，不用等自動視窗過期。
+          </li>
+          <li>
+            手動調整一旦生效，會<strong>完全蓋過</strong>自動判斷的結果，直到
+            這筆調整的期限到，或被手動取消為止；取消後會立刻回到自動判斷。
+          </li>
+          <li>
+            「原因」欄位務必填清楚，會直接存進這筆調整、也會留在稽核日誌裡
+            （action 是
+            <code className="mx-1 rounded bg-gray-100 px-1">
+              EMERGENCY_OVERRIDE_CREATE
+            </code>
+            /
+            <code className="mx-1 rounded bg-gray-100 px-1">
+              EMERGENCY_OVERRIDE_CANCEL
+            </code>
+            ），之後回顧才看得懂當初為什麼這樣調整。
+          </li>
+        </ul>
+      </Section>
+
       <Section title="如何取得管理員權限？">
         <p>
           <strong>這個網頁本身沒有任何地方可以把一個帳號設成管理員</strong>

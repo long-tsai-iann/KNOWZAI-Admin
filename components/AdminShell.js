@@ -14,6 +14,7 @@ const NAV_ITEMS = [
   { href: "/users", label: "使用者管理", key: "users" },
   { href: "/logs", label: "稽核日誌", key: "logs" },
   { href: "/push-test", label: "推播測試", key: "push-test" },
+  { href: "/emergency-status", label: "緊急狀態調整", key: "emergency-status" },
 ];
 
 export default function AdminShell({ active, children }) {
