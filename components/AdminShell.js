@@ -15,6 +15,7 @@ const NAV_ITEMS = [
   { href: "/logs", label: "稽核日誌", key: "logs" },
   { href: "/push-test", label: "推播測試", key: "push-test" },
   { href: "/emergency-status", label: "緊急狀態調整", key: "emergency-status" },
+  { href: "/ai-assistant", label: "AI 助理開關", key: "ai-assistant" },
 ];
 
 export default function AdminShell({ active, children }) {

@@ -72,3 +72,36 @@ describe("apiFetch", () => {
     await expect(apiFetch("/api/whatever")).rejects.toThrow(/請求失敗/);
   });
 });
+
+// 阿巧 AI 助理開關（AIMS-03 T-07）：切換一定要帶 reason 走 PUT，
+// 這是稽核日誌的依據，少了就無法事後檢討「當時為什麼關」。
+describe("api.aiChat*", () => {
+  test("setAiChatEnabled 用 PUT /api/admin/ai-chat 送 enabled 與 reason", async () => {
+    const { api } = require("../../lib/api");
+    global.fetch = jest.fn().mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      json: async () => ({ enabled: false, envEnabled: true, dbEnabled: false }),
+    });
+    saveToken("t");
+    const res = await api.setAiChatEnabled({ enabled: false, reason: "事件 AI-2026-001" });
+    const [url, options] = global.fetch.mock.calls[0];
+    expect(url).toMatch(/\/api\/admin\/ai-chat$/);
+    expect(options.method).toBe("PUT");
+    expect(JSON.parse(options.body)).toEqual({ enabled: false, reason: "事件 AI-2026-001" });
+    expect(res.enabled).toBe(false);
+  });
+
+  test("aiChatStatus 用 GET", async () => {
+    const { api } = require("../../lib/api");
+    global.fetch = jest.fn().mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      json: async () => ({ enabled: true }),
+    });
+    await api.aiChatStatus();
+    const [url, options] = global.fetch.mock.calls[0];
+    expect(url).toMatch(/\/api\/admin\/ai-chat$/);
+    expect(options.method).toBeUndefined();
+  });
+});
