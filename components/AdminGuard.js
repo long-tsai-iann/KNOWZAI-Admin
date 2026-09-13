@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { loadToken, clearToken } from "../lib/auth";
 import { api, ApiError } from "../lib/api";
@@ -11,9 +11,17 @@ import { watchIdle } from "../lib/idleTimeout";
  * （呼叫 /api/auth/me 拿最新資料，不只是「有 token 就放行」）。
  * 沒通過就導回 /login。
  */
+// 通過驗證後的 /api/auth/me 結果，給 AdminShell 決定要不要顯示「AI 治理」選單
+//（governance 旗標）用。只在 AdminGuard 內部可用。
+const MeContext = createContext(null);
+export function useMe() {
+  return useContext(MeContext);
+}
+
 export default function AdminGuard({ children }) {
   const router = useRouter();
   const [status, setStatus] = useState("checking"); // checking | ok | denied
+  const [me, setMe] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -32,6 +40,7 @@ export default function AdminGuard({ children }) {
           router.replace("/login?error=not-admin");
           return;
         }
+        setMe(me.user);
         setStatus("ok");
       } catch (e) {
         if (cancelled) return;
@@ -59,5 +68,5 @@ export default function AdminGuard({ children }) {
     );
   }
 
-  return children;
+  return <MeContext.Provider value={me}>{children}</MeContext.Provider>;
 }

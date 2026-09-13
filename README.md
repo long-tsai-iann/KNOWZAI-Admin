@@ -29,6 +29,13 @@
   每次切換必填原因，進稽核日誌（`AI_CHAT_ENABLE` / `AI_CHAT_DISABLE`）。
   後端另有部署層的 `AI_CHAT_ENABLED` 環境變數，設成 false 時這裡開了也不生效，
   頁面會提示。
+- **AI 治理儀表板**（`/governance`，**只有合規負責人看得到**）：ISO/IEC 42001 管理
+  制度的運作狀態——總覽（逾期／到期／簽核／覆核計數）、待辦與日程（做完自動排
+  下一期）、AIMS 文件閱讀與**簽核**（條文 7.5 的核准證據）、法規與標準參考、
+  各類紀錄瀏覽、**每月 AI 對話覆核**（抽樣 → 評分 → 匯出附錄 C markdown）。
+  文件與紀錄直接讀主專案 repo 的 `docs/iso42001/`，這裡是視窗，真相在 git。
+  權限是 ADMIN 的子集：`cd backend && npm run admin:governance <email>` 授權；
+  沒有旗標的管理員連選單都看不到，直接打 URL 後端 403。
 - **使用說明**（`/help`）：給團隊成員看的操作手冊，App 內建，不用另外找文件
 
 ### 錯誤檢舉懲罰機制
@@ -134,6 +141,7 @@ remote` 的舊網址也還能繼續用一段時間。
 │   ├── push-test/page.js      # 推播測試（開發者確認 FCM 是否正常/延遲）
 │   ├── emergency-status/page.js  # 緊急狀態調整（物資分配站開放建立的手動延長/提早結束）
 │   ├── ai-assistant/page.js      # AI 助理（阿巧）開關，kill switch
+│   ├── governance/page.js        # AI 治理儀表板（ISO 42001），合規負責人專用
 │   ├── help/page.js           # 使用說明（給團隊成員看的操作手冊）
 │   └── layout.js
 ├── components/

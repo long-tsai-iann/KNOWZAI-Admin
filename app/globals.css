@@ -6,3 +6,25 @@ body {
   background-color: #f7f7f5;
   color: #1f2937;
 }
+
+/* 治理儀表板的 markdown 檢視（AIMS 文件與紀錄）。沒裝 @tailwindcss/typography，
+   手寫一組夠用的樣式：標題層級、表格、程式碼、引言。 */
+.prose { color: #1f2937; line-height: 1.65; font-size: 0.875rem; }
+.prose h1 { font-size: 1.35rem; font-weight: 700; margin: 0 0 0.75rem; }
+.prose h2 { font-size: 1.1rem; font-weight: 700; margin: 1.5rem 0 0.5rem; padding-top: 0.75rem; border-top: 1px solid #f3f4f6; }
+.prose h3 { font-size: 1rem; font-weight: 600; margin: 1.25rem 0 0.4rem; }
+.prose h4 { font-size: 0.95rem; font-weight: 600; margin: 1rem 0 0.3rem; }
+.prose p { margin: 0.5rem 0; }
+.prose ul, .prose ol { margin: 0.5rem 0 0.5rem 1.25rem; }
+.prose ul { list-style: disc; } .prose ol { list-style: decimal; }
+.prose li { margin: 0.15rem 0; }
+.prose blockquote { border-left: 3px solid #fdba74; background: #fff7ed; padding: 0.5rem 0.75rem; margin: 0.75rem 0; color: #7c2d12; }
+.prose code { background: #f3f4f6; padding: 0.05rem 0.3rem; border-radius: 0.25rem; font-size: 0.8em; }
+.prose pre { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 0.75rem; overflow-x: auto; white-space: pre-wrap; }
+.prose pre code { background: none; padding: 0; }
+.prose table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.8rem; display: block; overflow-x: auto; }
+.prose th, .prose td { border: 1px solid #e5e7eb; padding: 0.35rem 0.5rem; text-align: left; vertical-align: top; }
+.prose th { background: #f9fafb; font-weight: 600; }
+.prose a { color: #c2410c; text-decoration: underline; }
+.prose hr { border-color: #e5e7eb; margin: 1.25rem 0; }
+.prose input[type="checkbox"] { margin-right: 0.35rem; }
