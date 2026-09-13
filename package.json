@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "description": "攏災影 KNOW ZAI 管理後台",
+  "engines": {
+    "node": ">=20",
+    "npm": "^10"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
