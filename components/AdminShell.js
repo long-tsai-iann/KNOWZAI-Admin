@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import AdminGuard, { useMe } from "./AdminGuard";
 import { clearToken } from "../lib/auth";
 
-// 功能選單：實際做事的頁面
+// 功能選單分兩組：日常營運（所有管理員），AI 治理 / AIMS（跟 ISO 42001 制度
+// 有關的頁面，選單上用標籤區隔，讓人一眼看出「這不是平常的審核工作」）。
 const NAV_ITEMS = [
   { href: "/dashboard", label: "儀表板", key: "dashboard" },
   { href: "/posts", label: "災情貼文審核", key: "posts" },
@@ -15,16 +16,44 @@ const NAV_ITEMS = [
   { href: "/logs", label: "稽核日誌", key: "logs" },
   { href: "/push-test", label: "推播測試", key: "push-test" },
   { href: "/emergency-status", label: "緊急狀態調整", key: "emergency-status" },
-  { href: "/ai-assistant", label: "AI 助理開關", key: "ai-assistant" },
 ];
+
+// AI 治理組。「AI 助理開關」所有管理員都看得到（緊急時任一技術負責人要能先關再報，
+// AIMS-04 §2）；「AI 治理儀表板」只給合規負責人（governance 旗標）。
+const AIMS_ITEMS = [
+  { href: "/ai-assistant", label: "AI 助理開關", key: "ai-assistant", badge: "AIMS", governanceOnly: false },
+  { href: "/governance", label: "AI 治理儀表板", key: "governance", badge: "AIMS 負責人", governanceOnly: true },
+];
+
+function NavLink({ item, active }) {
+  return (
+    <Link
+      href={item.href}
+      className={`flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-sm font-medium transition ${
+        active === item.key ? "bg-orange-100 text-orange-800" : "text-gray-600 hover:bg-gray-100"
+      }`}
+    >
+      <span>{item.label}</span>
+      {item.badge && (
+        <span
+          className={`shrink-0 rounded-full border px-1.5 py-px text-[10px] font-semibold leading-4 ${
+            item.governanceOnly
+              ? "border-purple-300 bg-purple-50 text-purple-700"
+              : "border-purple-200 bg-white text-purple-600"
+          }`}
+        >
+          {item.badge}
+        </span>
+      )}
+    </Link>
+  );
+}
 
 // 治理選單只給合規負責人（ADMIN + governance 旗標）看；一般管理員連入口都沒有。
 // 後端 /api/governance/* 另有 governanceRequired 擋著，藏選單只是不誤導。
 function ShellInner({ active, children, onLogout }) {
   const me = useMe();
-  const navItems = me?.governance
-    ? [...NAV_ITEMS, { href: "/governance", label: "AI 治理儀表板", key: "governance" }]
-    : NAV_ITEMS;
+  const aimsItems = AIMS_ITEMS.filter((i) => !i.governanceOnly || me?.governance);
 
   return (
       <div className="flex h-screen overflow-hidden">
@@ -35,18 +64,15 @@ function ShellInner({ active, children, onLogout }) {
           </div>
 
           <nav className="flex flex-col gap-1 px-3">
-            {navItems.map((item) => (
-              <Link
-                key={item.key}
-                href={item.href}
-                className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
-                  active === item.key
-                    ? "bg-orange-100 text-orange-800"
-                    : "text-gray-600 hover:bg-gray-100"
-                }`}
-              >
-                {item.label}
-              </Link>
+            <div className="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wide text-gray-400">日常營運</div>
+            {NAV_ITEMS.map((item) => (
+              <NavLink key={item.key} item={item} active={active} />
+            ))}
+            <div className="mt-3 px-3 pb-1 text-[11px] font-semibold uppercase tracking-wide text-purple-500">
+              AI 治理 · ISO 42001
+            </div>
+            {aimsItems.map((item) => (
+              <NavLink key={item.key} item={item} active={active} />
             ))}
           </nav>
 

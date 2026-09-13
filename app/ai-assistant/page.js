@@ -67,11 +67,41 @@ export default function AiAssistantPage() {
   return (
     <AdminShell active="ai-assistant">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">AI 助理（阿巧）開關</h1>
-        <p className="mt-1 text-sm text-gray-500">
-          發現阿巧回覆有害內容、供應商異常、或金鑰疑似外洩時，在這裡立即關閉。
-          關閉後 App 的阿巧入口會隱藏、對話 API 回「暫停服務」，地圖、警示、避難所等
-          其他功能<strong>完全不受影響</strong>。生效最多延遲 15 秒。
+        <div className="mb-1 flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-gray-800">AI 助理（阿巧）開關</h1>
+          <span className="rounded-full border border-purple-200 bg-white px-2 py-0.5 text-xs font-semibold text-purple-600">AIMS · 緊急遏制</span>
+        </div>
+        <p className="text-sm text-gray-500">
+          這是阿巧的「拔插頭」。關閉後 App 的阿巧入口會隱藏、對話 API 回「暫停服務」，
+          地圖、警示、避難所等其他功能<strong>完全不受影響</strong>。生效最多延遲 15 秒。
+        </p>
+      </div>
+
+      {status && (
+        <div className={`mb-6 flex max-w-2xl items-center gap-4 rounded-2xl border-2 p-5 ${enabled ? "border-green-300 bg-green-50" : "border-red-300 bg-red-50"}`}>
+          <div className={`text-4xl ${enabled ? "" : "grayscale"}`}>{enabled ? "🟢" : "🔴"}</div>
+          <div>
+            <div className={`text-xl font-bold ${enabled ? "text-green-800" : "text-red-800"}`}>
+              {enabled ? "阿巧目前：服務中" : "阿巧目前：已關閉"}
+            </div>
+            <div className="text-sm text-gray-600">
+              {enabled ? "使用者可以正常對話。" : "使用者看到「暫停服務中，其他功能不受影響」。"}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="mb-6 max-w-2xl rounded-2xl bg-white p-5 shadow-sm">
+        <h2 className="mb-2 font-semibold text-gray-800">什麼時候該關？</h2>
+        <ul className="space-y-1 text-sm text-gray-700">
+          <li>🔴 阿巧給了<strong>可能危及安全</strong>的建議（錯的避難方式、勸人不撤離、錯的緊急電話、編造地點）</li>
+          <li>🔴 GROQ 金鑰疑似外洩</li>
+          <li>🟠 供應商（Groq）持續異常、備援也失敗，回覆變成一直出錯</li>
+          <li>🟠 月覆核發現「有害」評分且原因未查明</li>
+        </ul>
+        <p className="mt-2 text-xs text-gray-500">
+          原則（AIMS-04 §2）：<strong>先關再報</strong>。任一技術負責人都可以關，不用先開會；關了之後 30 分鐘內通知 AI 管理負責人，並在治理儀表板開事件紀錄。
+          恢復前要有修正紀錄與 golden set 結果。
         </p>
       </div>
 
@@ -80,18 +110,7 @@ export default function AiAssistantPage() {
 
       {status && (
         <div className="mb-6 max-w-2xl rounded-2xl bg-white p-5 shadow-sm">
-          <div className="mb-3 flex items-center gap-3">
-            <h2 className="font-semibold text-gray-800">目前狀態</h2>
-            {enabled ? (
-              <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
-                服務中
-              </span>
-            ) : (
-              <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">
-                已關閉
-              </span>
-            )}
-          </div>
+          <h2 className="mb-3 font-semibold text-gray-800">技術細節（兩層開關）</h2>
 
           <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm text-gray-700">
             <dt className="text-gray-500">後台開關</dt>

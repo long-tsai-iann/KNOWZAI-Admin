@@ -276,6 +276,37 @@ export default function HelpPage() {
         </ul>
       </Section>
 
+      <Section title="AI 助理開關（選單上標 AIMS）">
+        <p>
+          阿巧（App 裡的 AI 防災助理）的「拔插頭」。發現它給出可能危及安全的建議、
+          金鑰疑似外洩、或供應商一直出錯時，<strong>先關再報</strong>——任一管理員都可以關，
+          不用先開會。關閉後 App 隱藏阿巧入口、其他功能完全不受影響，最多 15 秒生效。
+        </p>
+        <p>
+          每次開／關都要填原因，會進稽核日誌。頁面上有「什麼時候該關」的清單。
+          恢復服務前要有修正紀錄。
+        </p>
+      </Section>
+
+      <Section title="AI 治理儀表板（選單上標 AIMS 負責人）">
+        <p>
+          <strong>只有被授權為「合規負責人」的管理員看得到這個選單</strong>，其他管理員沒有入口。
+          這是 ISO/IEC 42001 AI 管理制度的操作台，追蹤制度「有沒有在運作」：
+        </p>
+        <ul className="list-disc space-y-1 pl-5">
+          <li><strong>總覽</strong>：紅色卡片＝制度還沒運作的地方；「從哪裡開始」三步驟；接下來要做的事；誰負責什麼</li>
+          <li><strong>待辦／日程</strong>：所有處置措施、CAPA、事件行動項目、演練與審查排程。做完按「✓ 完成」，週期性項目會自動排下一期</li>
+          <li><strong>文件</strong>：讀 AIMS 文件並<strong>簽核</strong>——這是「文件經核准」的證據。文件內容在 repo，改內容要改 repo 檔案並升版本號</li>
+          <li><strong>法規與標準</strong>：ISO 42001、個資法、Apple／Play 政策、Groq 條款的對照表</li>
+          <li><strong>紀錄</strong>：事件、演練、覆核、稽核、管理審查、訓練的紀錄檔；空的目錄會標紅</li>
+          <li><strong>月覆核</strong>：每月從 AI 對話隨機抽 50 則逐一評分（正常／錯誤／有害／越界），提交後匯出 markdown 存進 repo。這是「人工監督」的證據</li>
+        </ul>
+        <p>
+          要授權某位管理員為合規負責人：<code className="rounded bg-gray-100 px-1">cd backend && npm run admin:governance &lt;email&gt;</code>
+          （對象必須已經是管理員）。
+        </p>
+      </Section>
+
       <Section title="如何取得管理員權限？">
         <p>
           <strong>這個網頁本身沒有任何地方可以把一個帳號設成管理員</strong>
