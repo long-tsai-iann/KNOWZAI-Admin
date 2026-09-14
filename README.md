@@ -164,6 +164,11 @@ remote` 的舊網址也還能繼續用一段時間。
   刻意的：管理員權限異動屬於高風險操作，先不開放透過網頁介面進行，避免帳號
   被盜用後直接在後台自我提權或亂授權給別人。
 
+## 跟主專案共用的契約
+
+API 錯誤格式、enum、Node 版本、環境變數等契約的真相在主 repo：
+`long_tsai_iann/docs/cross-repo-conventions.md`。改後端契約時對照那份表同步這裡。
+
 ## 提交前檢查
 
 - 第一次 clone 後跑一次 `git config core.hooksPath .githooks`，pre-commit 會擋 `.env`、金鑰與 `.next/`。

@@ -1,3 +1,7 @@
+# 攏災影管理後台
+
+專案說明在 `README.md`；跟主專案共用的契約在 `long_tsai_iann/docs/cross-repo-conventions.md`。
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know
