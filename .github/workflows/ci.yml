@@ -33,8 +33,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_CONFIG: .gitleaks.toml
-          GITLEAKS_ENABLE_SUMMARY: "true"
+      # 不用 gitleaks-action：它對「組織」底下的 repo 要收費授權（管理後台 repo 就撞到），
+      # 直接跑開源 CLI 一樣的結果、免授權，也跟 pre-commit 用的是同一個指令。
+      - name: Run gitleaks
+        run: |
+          set -e
+          VER=8.30.1
+          curl -sSL -o gitleaks.tgz "https://github.com/gitleaks/gitleaks/releases/download/v${VER}/gitleaks_${VER}_linux_x64.tar.gz"
+          tar -xzf gitleaks.tgz gitleaks
+          ./gitleaks git . --config .gitleaks.toml --no-banner --redact --exit-code 1 --verbose
