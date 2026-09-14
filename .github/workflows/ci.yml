@@ -24,3 +24,17 @@ jobs:
       # lib/api.js 會退回 http://localhost:3002，只影響執行期行為，不影響
       # build 本身能不能過）。
       - run: npm run build
+
+  secrets:
+    # 跟主專案同一套：.env / 金鑰不進 repo（.gitleaks.toml）。
+    name: Secret scan (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_CONFIG: .gitleaks.toml
+          GITLEAKS_ENABLE_SUMMARY: "true"

@@ -163,3 +163,8 @@ remote` 的舊網址也還能繼續用一段時間。
   的 UI——目前這個操作只能透過後端的 `npm run admin:promote` 腳本執行，這是
   刻意的：管理員權限異動屬於高風險操作，先不開放透過網頁介面進行，避免帳號
   被盜用後直接在後台自我提權或亂授權給別人。
+
+## 提交前檢查
+
+- 第一次 clone 後跑一次 `git config core.hooksPath .githooks`，pre-commit 會擋 `.env`、金鑰與 `.next/`。
+- CI 除了 test/build 還跑 gitleaks（設定在 `.gitleaks.toml`，跟主專案同一套）。

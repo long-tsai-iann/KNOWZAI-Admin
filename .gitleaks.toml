@@ -1,0 +1,21 @@
+# gitleaks 設定（跟主專案 long_tsai_iann/.gitleaks.toml 同一套思路，改了請兩邊同步）。
+[extend]
+useDefault = true
+
+[allowlist]
+description = "範例檔與文件裡的假值"
+paths = [
+  '''\.env\.local\.example$''',
+  '''package-lock\.json$''',
+  '''\.md$''',
+]
+regexes = ['''(your|YOUR|xxx|XXX|placeholder|<[A-Z_]+>)''']
+
+[[rules]]
+id = "knowzai-env-assignment"
+description = "專案環境變數被寫死在程式或設定檔裡"
+regex = '''(?i)\b(NEXT_PUBLIC_[A-Z_]*KEY|JWT_SECRET|DATABASE_URL|VERCEL_TOKEN)\s*[=:]\s*["']?[A-Za-z0-9_\-./+:@]{16,}'''
+tags = ["knowzai", "env"]
+[rules.allowlist]
+regexTarget = "line"
+regexes = ['''(process\.env\.|=\s*["']?(your|xxx|placeholder|changeme|<|https?://))''']

@@ -1,0 +1,18 @@
+#!/bin/sh
+# pre-commit：擋 .env、金鑰與不該進 repo 的東西（跟主專案同一套）。
+# 啟用方式（每台機器一次）：git config core.hooksPath .githooks
+set -e
+fail=0
+staged=$(git diff --cached --name-only --diff-filter=ACMR)
+bad=$(printf '%s\n' "$staged" | grep -E '(^|/)\.env(\.[^/]*)?$|(^|/)node_modules/|^\.next/|^out/|\.(p12|pem|key)$' | grep -vE '\.env\.local\.example$' || true)
+if [ -n "$bad" ]; then
+  echo "✗ 這些檔案不能 commit："; printf '%s\n' "$bad" | sed 's/^/    /'; fail=1
+fi
+if command -v gitleaks >/dev/null 2>&1; then
+  if ! gitleaks git --staged --no-banner --redact --config .gitleaks.toml >/dev/null 2>&1; then
+    echo "✗ gitleaks 偵測到疑似金鑰："; gitleaks git --staged --no-banner --redact --config .gitleaks.toml || true; fail=1
+  fi
+else
+  echo "ℹ 沒裝 gitleaks，跳過本機秘密掃描（CI 仍會掃）。"
+fi
+if [ "$fail" -ne 0 ]; then echo; echo "commit 已中止。"; exit 1; fi
