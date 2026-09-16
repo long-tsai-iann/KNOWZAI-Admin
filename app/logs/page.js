@@ -4,6 +4,20 @@ import { useEffect, useState } from "react";
 import AdminShell from "../../components/AdminShell";
 import { api, ApiError } from "../../lib/api";
 
+// 每一格的 render 都要能吞下 null／怪值：日誌是別人寫進去的資料，一筆壞掉不能讓整頁掛。
+function fmt(d) {
+  const t = new Date(d);
+  return Number.isNaN(t.getTime()) ? "—" : t.toLocaleString("zh-TW", { hour12: false });
+}
+function safeJson(v) {
+  try {
+    const s = typeof v === "string" ? v : JSON.stringify(v);
+    return s.length > 300 ? s.slice(0, 300) + "…" : s;
+  } catch {
+    return "—";
+  }
+}
+
 // 三類日誌的定義集中在這裡：要查哪支 API、表格長什麼樣、篩選欄位叫什麼。
 // 對應主專案 docs/audit-logging-policy.md 的 §2.1 / §2.2 / §2.3。
 const TABS = [
@@ -15,7 +29,7 @@ const TABS = [
     filterParam: "email",
     fetch: (params) => api.adminActionLogs(params),
     columns: [
-      { key: "createdAt", label: "時間", render: (r) => new Date(r.createdAt).toLocaleString("zh-TW") },
+      { key: "createdAt", label: "時間", render: (r) => fmt(r.createdAt) },
       { key: "adminEmail", label: "操作者" },
       { key: "action", label: "動作" },
       { key: "target", label: "目標", render: (r) => `${r.targetType}${r.targetId ? ` #${r.targetId}` : ""}` },
@@ -36,7 +50,7 @@ const TABS = [
       {
         key: "detail",
         label: "備註",
-        render: (r) => (r.detail ? JSON.stringify(r.detail) : "—"),
+        render: (r) => (r.detail ? safeJson(r.detail) : "—"),
       },
     ],
   },
@@ -48,19 +62,19 @@ const TABS = [
     filterParam: "email",
     fetch: (params) => api.authEventLogs(params),
     columns: [
-      { key: "createdAt", label: "時間", render: (r) => new Date(r.createdAt).toLocaleString("zh-TW") },
+      { key: "createdAt", label: "時間", render: (r) => fmt(r.createdAt) },
       {
         key: "eventType",
         label: "事件",
         render: (r) => (
           <span
             className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-              r.eventType.includes("FAILURE")
+              String(r.eventType || "").includes("FAILURE")
                 ? "bg-red-100 text-red-700"
                 : "bg-green-100 text-green-700"
             }`}
           >
-            {r.eventType}
+            {r.eventType || "—"}
           </span>
         ),
       },
@@ -86,7 +100,7 @@ const TABS = [
     filterParam: "email",
     fetch: (params) => api.aiInteractionLogs(params),
     columns: [
-      { key: "createdAt", label: "時間", render: (r) => new Date(r.createdAt).toLocaleString("zh-TW") },
+      { key: "createdAt", label: "時間", render: (r) => fmt(r.createdAt) },
       { key: "user", label: "使用者", render: (r) => r.user?.nickname || r.user?.email || "—" },
       {
         key: "message",
@@ -147,8 +161,8 @@ export default function LogsPage() {
         ? `?${tab.filterParam}=${encodeURIComponent(kw)}&limit=50`
         : "?limit=50";
       const res = await tab.fetch(params);
-      setLogs(res.logs);
-      setTotal(res.total);
+      setLogs(Array.isArray(res.logs) ? res.logs : []);
+      setTotal(Number(res.total) || 0);
     } catch (e) {
       setError(e instanceof ApiError ? e.message : "讀取失敗");
     } finally {
@@ -231,13 +245,21 @@ export default function LogsPage() {
                   </td>
                 </tr>
               )}
-              {logs.map((row) => (
-                <tr key={row.id} className="border-b border-gray-50 align-top">
-                  {tab.columns.map((c) => (
-                    <td key={c.key} className="px-4 py-3 text-gray-600">
-                      {c.render ? c.render(row) : row[c.key] ?? "—"}
-                    </td>
-                  ))}
+              {logs.map((row, i) => (
+                <tr key={row.id ?? i} className="border-b border-gray-50 align-top">
+                  {tab.columns.map((c) => {
+                    let cell;
+                    try {
+                      cell = c.render ? c.render(row) : row[c.key] ?? "—";
+                    } catch {
+                      cell = "—";
+                    }
+                    return (
+                      <td key={c.key} className="px-4 py-3 text-gray-600">
+                        {cell}
+                      </td>
+                    );
+                  })}
                 </tr>
               ))}
             </tbody>
